@@ -1,0 +1,56 @@
+{
+    "preset": {
+        "username": "",
+        "scene": "env_testscene",
+        "role": "dancer",
+        "address": {
+            "ip": "",
+            "port": 7800
+        },
+        "server_address": {
+            "ip": "146.176.133.137",
+            "port": 7777
+        },
+        "producer_overrides": {
+            "zed/v2.1": {
+                "name": "camera"
+            },
+            "env/v1.0": {
+                "name": "generic/prod_ipc/v1.0",
+                "opts": {
+                    "ipcInBufferName": "Dancegraph_Env_In",
+                    "ipcBufferEntries": 5
+                }
+            }
+        },
+        "env_signal_consumers": {
+            "env/v1.0": [
+                {
+                    "name": "generic/ipc/v1.0",
+                    "opts": {
+                        "ipcOutBufferName": "Dancegraph_Env_Out",
+                        "ipcBufferEntries": 5
+                    }
+                }
+            ]
+        },
+        "user_signal_consumers": {
+            "zed/v2.1" : [
+                {
+                    "name" : "generic/dump2file/v1.0",
+                    "opts" : {
+                    }
+                }
+            ]
+        },
+        "transformers" : [
+        ],        
+        "include_ipc_consumers": false,
+        "single_port_operation": false,
+        "ignore_ntp": true
+    },
+    "autoConnect": true,
+    "logLevel": 2,
+    "logToFileStem": "unity",
+    "simpleSkeletonSmoothing": false
+}
