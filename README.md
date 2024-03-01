@@ -1,5 +1,5 @@
 <h2 align="centre">DanceGraph-Unity</h2>
-<p align="center">DanceGraph is a low-latency engine agnostic interactive avatar platform for dancing and having fun online. It is provided as an open source toolset from the <a href="https://carouseldancing.org">CAROUSEL+</a> EU funded FET PROACT project #101017779</p>
+<p align="center">DanceGraph Unity is an adapter endpoint for the DanceGraph low-latency engine-agnostic interactive avatar platform for dancing and having fun online. DanceGraph is a low-latency engine agnostic interactive avatar platform for dancing and having fun online. It is provided as an open source toolset from the <a href="https://carouseldancing.org">CAROUSEL+</a> EU funded FET PROACT project #101017779</p>
 
 <div align="center">
 
