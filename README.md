@@ -10,9 +10,8 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/CarouselDancing/dancegraph-unity/graphs/commit-activity)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
-<!--[![Github Downloads (total)](https://img.shields.io/github/downloads/CarouselDancing/dancegraph-unity/total.svg)](https://github.com/CarouselDancing/dancegraph-unity/releases)-->
 ![Lines of code](https://tokei.rs/b1/github/CarouselDancing/dancegraph-unity)
-
+<!--[![Github Downloads (total)](https://img.shields.io/github/downloads/CarouselDancing/dancegraph-unity/total.svg)](https://github.com/CarouselDancing/dancegraph-unity/releases)-->
 
 </div>
 
