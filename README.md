@@ -1,5 +1,5 @@
-<h2 align="centre">DanceGraph-Unity</h2>
-<p align="center">DanceGraph Unity is an adapter endpoint for the DanceGraph low-latency engine-agnostic interactive avatar platform for dancing and having fun online. DanceGraph is a low-latency engine agnostic interactive avatar platform for dancing and having fun online. It is provided as an open source toolset from the <a href="https://carouseldancing.org">CAROUSEL+</a> EU funded FET PROACT project #101017779</p>
+<h2 align="centre">DanceGraph</h2>
+<p align="center">DanceGraph is a low-latency engine agnostic interactive avatar platform for dancing and having fun online. It is provided as an open source toolset from the <a href="https://carouseldancing.org">CAROUSEL+</a> EU funded FET PROACT project #101017779</p>
 
 <div align="center">
 
@@ -10,8 +10,9 @@
 [![Maintenance](https://img.shields.io/badge/Maintained%3F-yes-brightgreen.svg)](https://github.com/CarouselDancing/dancegraph-unity/graphs/commit-activity)
 [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v2.0%20adopted-ff69b4.svg)](CODE_OF_CONDUCT.md)
-![Lines of code](https://tokei.rs/b1/github/CarouselDancing/dancegraph-unity)
-<!--[![Github Downloads (total)](https://img.shields.io/github/downloads/CarouselDancing/dancegraph-unity/total.svg)](https://github.com/CarouselDancing/dancegraph-unity/releases)-->
+[![Github Downloads (total)](https://img.shields.io/github/downloads/CarouselDancing/dancegraph-unity/total.svg)](https://github.com/CarouselDancing/dancegraph-unity/releases)
+![Lines of code](https://img.shields.io/tokei/lines/github/CarouselDancing/dancegraph-unity)
+
 
 </div>
 
@@ -112,4 +113,5 @@ Currently, VR controllers can be used to move the HMD inside the game area, inde
 
 B. Koniaris, D. Sinclair, K. Mitchell: _[DanceMark: An open telemetry framework for latency sensitive real-time networked immersive experiences](https://napier-repository.worktribe.com/output/3492930/dancemark-an-open-telemetry-framework-for-latency-sensitive-real-time-networked-immersive-experiences)_, IEEE VR 2024 OpenVRLab Workshop on Open Access Tools and Libraries for Virtual Reality.
 
-D. Sinclair, A. Ademola, B. Koniaris, K. Mitchell: _[DanceGraph: A Complementary Architecture for Synchronous Dancing Online](https://farpeek.com/DanceGraph.pdf)_, 2023 36th International Computer Animation & Social Agents (CASA) . 
+D. Sinclair, A. Ademola, B. Koniaris, K. Mitchell: _[DanceGraph: A Complementary Architecture for Synchronous Dancing Online](https://farpeek.com/DanceGraph.pdf)_, 2023 36th International Computer Animation & Social Agents (CASA) .
+

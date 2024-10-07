@@ -70,7 +70,6 @@ public class DanceGraphMinimalCpp
 
     public delegate void GetLastDanceGraphErrorDelegate(StringBuilder str, int len);
     public static GetLastDanceGraphErrorDelegate GetLastDanceGraphError;
-
     
 #else
         
@@ -196,7 +195,8 @@ public class DanceGraphMinimalCpp
     #else
         [DllImport ("dancegraph-minimal")]
 #endif
-        public static extern void GetLastDanceGraphError(Stringbuilder str, unsigned int len);
+    //public static extern void GetLastDanceGraphError(string str, int len);
+        public static extern void GetLastDanceGraphError(StringBuilder str, int len);
 
 #endif
 

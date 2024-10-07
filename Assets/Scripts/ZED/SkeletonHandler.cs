@@ -373,7 +373,8 @@ public class SkeletonHandler : ScriptableObject
     private static HumanBodyBones[] humanBones34 = new HumanBodyBones[] {
     HumanBodyBones.Hips,
     HumanBodyBones.Spine,
-    HumanBodyBones.UpperChest,
+    //    HumanBodyBones.UpperChest,
+    HumanBodyBones.Chest,
     HumanBodyBones.Neck,
     HumanBodyBones.LeftShoulder,
     HumanBodyBones.LeftUpperArm,
@@ -411,6 +412,7 @@ public class SkeletonHandler : ScriptableObject
     private static int[] poseBoneList34 = new int[] {
     Array.IndexOf(humanBones34,HumanBodyBones.Hips),
     Array.IndexOf(humanBones34,HumanBodyBones.UpperChest),
+	//Array.IndexOf(humanBones34,HumanBodyBones.Chest),		
     Array.IndexOf(humanBones34,HumanBodyBones.RightShoulder),
     Array.IndexOf(humanBones34,HumanBodyBones.RightUpperArm),
     Array.IndexOf(humanBones34,HumanBodyBones.RightLowerArm),
@@ -857,7 +859,7 @@ public class SkeletonHandler : ScriptableObject
         HumanBodyBones[] humanBone;
         int [] poseBoneList;
 
-        
+
         switch (BodyFormat)
         {
             case (BODY_FORMAT.BODY_38):
@@ -925,10 +927,13 @@ public class SkeletonHandler : ScriptableObject
     public void DanceGraphSetHumanPoseControlKPRot(Vector3 rootPosition,
                                                    Quaternion rootOrientation,
                                                    Vector3 []keypoints,
-                                                   Quaternion [] jointsRotation) {
+                                                   Quaternion [] jointsRotation,
+                                                   float scale = 1.0f
+    ) {
 
         int [] poseBoneList;
         HumanBodyBones[] humanBone;
+
         switch (BodyFormat)
         {
             case (BODY_FORMAT.BODY_38_KEYPOINTSPLUS):                
@@ -941,27 +946,28 @@ public class SkeletonHandler : ScriptableObject
                 poseBoneList = poseBoneList34;
                 break;
         }
-        
+
         int hipidx = Array.IndexOf(humanBone, HumanBodyBones.Hips);
         int spineidx = Array.IndexOf(humanBone, HumanBodyBones.Spine);
         // Store any joint local rotation (if the bone exists)
         if (rigBoneIdx[hipidx].transform)
         {
-            rigBoneTargetPos[spineidx] = keypoints[spineidx];
+            rigBoneTargetPos[spineidx] = scale * keypoints[spineidx];
             rigBoneTargetIdx[spineidx] = jointsRotation[spineidx];
         }
 
         
         for (int idx = 0; idx < rigBoneTargetPos.Length; idx++)
-            rigBoneTargetPos[idx] = keypoints[idx];
+            rigBoneTargetPos[idx] = scale * keypoints[idx];
+
         foreach (int boneIdx in poseBoneList)
             if (boneIdx > 0)
                 rigBoneTargetIdx[boneIdx] = jointsRotation[boneIdx];
 
         // Store global transform (to be applied to the Hips joint).
         targetBodyOrientation = rootOrientation;
-        targetBodyPosition = rootPosition;
-
+        targetBodyPosition = scale * rootPosition;
+		//        Debug.Log($"DGSHPC: rootPos: {rootPosition}, {targetBodyPosition}");        		
     }
 
     
@@ -985,8 +991,13 @@ public class SkeletonHandler : ScriptableObject
          {
               parentsIdx = parentsIdx_34;
          }         
+         else if ((currentBodyFormat == BODY_FORMAT.BODY_38_KEYPOINTS)
+             || (currentBodyFormat == BODY_FORMAT.BODY_38_KEYPOINTSPLUS))
+         {
+             parentsIdx = parentsIdx_38;
+         }
          else {
-              parentsIdx = parentsIdx_38;
+             return;
          }
 
          for (int i = 0; i < parentsIdx.Length; i++) {
@@ -1009,15 +1020,19 @@ public class SkeletonHandler : ScriptableObject
          {
               parentsIdx = parentsIdx_34;
          }         
-         else {
-              parentsIdx = parentsIdx_38;
+         else if ((currentBodyFormat == BODY_FORMAT.BODY_38_KEYPOINTS)
+             || (currentBodyFormat == BODY_FORMAT.BODY_38_KEYPOINTSPLUS))
+         {
+             parentsIdx = parentsIdx_38;
          }
-
+         else {
+             return;
+         }
          for (int i = 0; i < parentsIdx.Length; i++) {
               if ((parentsIdx[i]) > 0 && (parentsIdx[i] < i)) {
                    Vector3 pos1 = testAvatarJoints[i].transform.localPosition;
                    Vector3 pos2 = testAvatarJoints[parentsIdx[i]].transform.localPosition;
-
+                   //Debug.Log($"Test Skel Drawing bone {i} at position {pos1}");
                    testAvatarBones[i].transform.localScale = new Vector3(0.01f, 0.5f * Vector3.Distance(pos1, pos2), 0.01f);
                    testAvatarBones[i].transform.localPosition = 0.5f * (pos1 + pos2);
 

@@ -75,8 +75,8 @@ public class ClientConnection : MonoBehaviour
             }
 
             if(!connected) {
-                
                 StringBuilder netErr = new StringBuilder(150);
+                //DanceGraphMinimalCpp.GetLastDanceGraphError(netErr.ToString(), netErr.Capacity);
                 DanceGraphMinimalCpp.GetLastDanceGraphError(netErr, netErr.Capacity);
                 World.instance.QuitApplication(netErr.ToString());
               }

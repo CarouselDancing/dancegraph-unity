@@ -8,10 +8,11 @@ using System.Collections.Generic;
 public static class SignalConstants {
     // Just so all the size values are in one place
     public const int MUSICTRACK_MAX_SIZE = 256;
-    public const int USERNAME_MAX_SIZE = 256;
-    public const int USERAVATAR_MAX_SIZE = 256;
+    public const int USERNAME_MAX_SIZE = 255;
+    public const int USERAVATARTYPE_MAX_SIZE = 32;
+    public const int USERAVATARPARAMS_MAX_SIZE = 1024;
     public const int SCENENAME_MAX_SIZE = 256;
-    public const int ENVSIGNAL_MAX_SIZE = 1024;
+    public const int ENVSIGNAL_MAX_SIZE = 1536;
 };
 
 
@@ -33,28 +34,16 @@ public static class Global {
     // SendStruct also needs to send the metadata
     public static void SendStruct<T>(string name, T s) where T: struct {
         int size = System.Runtime.InteropServices.Marshal.SizeOf(s);
-
         byte []arr = new byte[size];
-
-
         // We should be able to do this without the alloc and copy
         IntPtr ptr = Marshal.AllocHGlobal(size);
         Marshal.StructureToPtr(s, ptr, true);
         Marshal.Copy(ptr, arr, 0, size);
         Marshal.FreeHGlobal(ptr);
 
+        const int sigIdx = 0;
         Debug.Log($"Sending struct size {size} via SendStruct");
-        DanceGraphMinimalCpp.SendSignal(arr, size);
-        //Debug.Log(String.Format("Sending Signal of size {0}", size));
-        /*
-        // This doesn't work due to reference types
-        // Even when the types are inlined in the struct
-       
-        Span<T> bsp = MemoryMarshal.CreateSpan<T>(ref s, 1);
-        var bytespan = MemoryMarshal.Cast<T, byte>(bsp);
-       
-        DanceNetCpp.SendSignal(bytespan, size);
-        */
+        DanceGraphMinimalCpp.SendEnvSignal(arr, size, sigIdx);
     }
     
     public static T ReadStruct<T>(byte [] bytes)
@@ -152,6 +141,12 @@ public struct EnvSceneState {
         Global.SendStruct<EnvSceneState>("EnvSceneState", this);
         return v;
     }
+
+    public void SendStruct() {
+        signalID = SignalID.EnvSceneStateID;
+        Global.SendStruct<EnvSceneState>("EnvSceneState", this);        
+    }
+    
     /*
       [MarshalAs(UnmanagedType.U4)]
       public int senderID;
@@ -184,6 +179,11 @@ public struct SceneDataRequest {
         Global.SendStruct<SceneDataRequest>("SceneDataRequest", this);  
         return v;
     }
+
+    public void SendStruct() {
+        signalID = SignalID.EnvSceneRequestID;
+        Global.SendStruct<SceneDataRequest>("SceneDataRequest", this);  
+    }
    
     [MarshalAs(UnmanagedType.U4)]    
     public byte signalID;
@@ -203,18 +203,18 @@ public struct EnvUserState {
     private T SendValue<T>(T v) {
         //timeStamp = Global.TimeStamp();
         signalID = SignalID.EnvUserStateID;
+        //Global.SendStruct<EnvUserState>("EnvUserState", this);
         Global.SendStruct<EnvUserState>("EnvUserState", this);
         return v;
     }
-    /*
-      [MarshalAs(UnmanagedType.U4)]
-      public int senderID;
-      [MarshalAs(UnmanagedType.U8)]
-      public ulong timeStamp;
-    */
 
-        [MarshalAs(UnmanagedType.U1)]    
-        public byte signalID;
+    public void SendStruct() {
+        signalID = SignalID.EnvUserStateID;
+        Global.SendStruct<EnvUserState>("EnvUserState", this);  
+    }
+
+    [MarshalAs(UnmanagedType.U1)]    
+    public byte signalID;
 
     
     // Should be the SignalMetadata, rather than the signal data proper
@@ -223,8 +223,12 @@ public struct EnvUserState {
 
     [MarshalAs(UnmanagedType.ByValTStr, SizeConst = SignalConstants.USERNAME_MAX_SIZE)]        
     public string _userName;
-    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = SignalConstants.USERAVATAR_MAX_SIZE)]        
-    public string _avatarDesc;
+    
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = SignalConstants.USERAVATARTYPE_MAX_SIZE)]        
+    public string _avatarType;
+
+    [MarshalAs(UnmanagedType.ByValTStr, SizeConst = SignalConstants.USERAVATARPARAMS_MAX_SIZE)] 
+    public string _avatarParams;
 
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]    
     public float[] _position;
@@ -232,9 +236,13 @@ public struct EnvUserState {
     [MarshalAs(UnmanagedType.ByValArray, SizeConst = 3)]    
     public short[] _orientation;
 
-    [MarshalAs(UnmanagedType.ByValArray, SizeConst = 1)]    
-    public byte [] _isActive;
-    
+    [MarshalAs(UnmanagedType.U1)]
+    public byte _isActive;
+
+	[MarshalAs(UnmanagedType.U1)]
+	public byte _clientType;
+
+	
     public int userID {
         get => _userID;
         set => _userID = SendValue(value);
@@ -244,9 +252,14 @@ public struct EnvUserState {
         set => _userName = SendValue(value);
     }
 
-    public string avatarDesc {
-        get => _avatarDesc;
-        set => _avatarDesc = SendValue(value);
+    public string avatarType {
+        get => _avatarType;
+        set => _avatarType = SendValue(value);
+    }
+
+    public string avatarParams {
+        get => _avatarParams;
+        set => _avatarParams = SendValue(value);
     }
 
     // Three floats
@@ -261,9 +274,14 @@ public struct EnvUserState {
         set => _orientation = SendValue(value);
     }
 
-    public byte [] isActive {
-        get => isActive;
+    public byte isActive {
+        get => _isActive;
         set => _isActive = SendValue(value);
+    }
+
+    public byte clientType {
+        get => _clientType;
+        set => _clientType = SendValue(value);
     }
 };
 
@@ -277,12 +295,16 @@ public struct EnvUserDataRequest {
         Global.SendStruct<EnvUserDataRequest>("EnvUserDataRequest", this);      
         return v;
     }
-    /*
-      [MarshalAs(UnmanagedType.U4)]
-      public int senderID;
-      [MarshalAs(UnmanagedType.U8)]
-      public ulong timeStamp;
-    */
+
+
+    public void SendStruct() {
+        signalID = SignalID.EnvUserRequestID;
+        Global.SendStruct<EnvUserDataRequest>("EnvUserDataRequest", this);      
+    }
+
+
+
+
     [MarshalAs(UnmanagedType.U4)]    
     public byte signalID;
 
@@ -306,12 +328,11 @@ public struct EnvMusicState {
         Global.SendStruct<EnvMusicState>("EnvMusicState", this);
         return v;
     }
-    /*
-      [MarshalAs(UnmanagedType.U4)]
-      public int senderID;
-      [MarshalAs(UnmanagedType.U8)]
-      public ulong timeStamp;
-    */
+    public void SendStruct() {
+        signalID = SignalID.EnvMusicStateID;        
+        Global.SendStruct<EnvMusicState>("EnvMusicState", this);
+    }
+
     [MarshalAs(UnmanagedType.U4)]    
     public byte signalID;
 
@@ -355,12 +376,10 @@ public struct MusicDataRequest {
         Global.SendStruct<MusicDataRequest>("MusicDataRequest", this);  
         return v;
     }
-    /*
-      [MarshalAs(UnmanagedType.U4)]
-      public int senderID;
-      [MarshalAs(UnmanagedType.U8)]
-      public ulong timeStamp;
-    */
+    public void SendStruct() {
+        signalID = SignalID.EnvMusicRequestID;
+        Global.SendStruct<MusicDataRequest>("MusicDataRequest", this);  
+    }
     [MarshalAs(UnmanagedType.U4)]    
     public byte signalID;
 };
@@ -376,12 +395,11 @@ public struct EnvTestState {
         Global.SendStruct<EnvTestState>("EnvTestState", this);  
         return v;
     }
-    /*
-      [MarshalAs(UnmanagedType.U4)]
-      public int senderID;
-      [MarshalAs(UnmanagedType.U8)]
-      public ulong timeStamp;
-    */
+    public void SendValue() {
+        signalID = SignalID.EnvTestStateID;
+        Global.SendStruct<EnvTestState>("EnvTestState", this);  
+    }
+    
     [MarshalAs(UnmanagedType.U4)]    
     public byte signalID;
 

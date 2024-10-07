@@ -28,7 +28,6 @@ namespace DanceGraph
         }
 
         private void OnGUI() {
-
             if (!displayed)
                 return;
 
